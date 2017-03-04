@@ -30,6 +30,7 @@
 			for (var i = 0; i < $scope.articles.length; i++) {
 							//$scope.labels.push ()
 						//	console.log ($scope.articles[i][5].substr(12,8));
+						dstat.push ($scope.articles[i][2].substr(0,8));
 						dtnew = 	new Date($scope.articles[i][5].replace(    /^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,    '$4:$5:$6 $2/$3/$1'));
 						dtcr = new Date($scope.articles[i][2].replace(    /^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)$/,    '$4:$5:$6 $2/$3/$1'));
 						//	console.log(dtstr);
@@ -46,46 +47,67 @@
 													"Total Size":$scope.articles[i][7],
 												});
 								ustat.push ($scope.articles[i][3]);
-								dstat.push ($scope.articles[i][2]);
 
 						}
+
 						$scope.gridOptions.data = $scope.art;
 						//Options for finding users - articles numbers
 						var obj = { };
 							for (var i = 0, j = ustat.length; i < j; i++) {
 							 	obj[ustat[i]] = (obj[ustat[i]] || 0) + 1;
 							}
-					//	console.log(JSON.parse(JSON.stringify(obj)));
+						//console.log(JSON.parse(JSON.stringify(obj)));
+
+						const orderedobj = {};
+							Object.keys(obj).sort().forEach(function(key) {
+							  orderedobj[key] = obj[key];
+							});
+
+						//console.log(JSON.parse(JSON.stringify(orderedobj)));
+
 						$scope.labels= [];
 						$scope.data= [];
-							for (var key in obj) {
+							for (var key in orderedobj) {
 							     //   users.push({user:key,article:obj[key]});
 							        $scope.labels.push(key);
-							        $scope.data.push(obj[key]);
+							        $scope.data.push(orderedobj[key]);
 							        $scope.users.push({
 							        	"User" : key,
-							        	"ArticleNo":obj[key]
+							        	"ArticleNo":orderedobj[key]
 							        });
 							    }
 					
-							//console.log(JSON.stringify(users));
+							//console.log(JSON.stringify($scope.data));
 							//$scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
 							$scope.series = ['Wiki Users'];
 						
 						//Options for daily articles numbers
+						//console.log(dstat);
 						var dtobj = { };
 							for (var i = 0, j = dstat.length; i < j; i++) {
 							 	dtobj[dstat[i]] = (dtobj[dstat[i]] || 0) + 1;
 							}
+						//console.log(JSON.parse(JSON.stringify(dtobj)));
+						//const ordereddtobj  = {};
+							Object.keys(dtobj).sort(function (k1, k2) {
+								 //   var dateA = new Date(k1).getTime();
+								 //   var dateB = new Date(k2).getTime();
+								 //   console.log(dateA); console.log(dateB); console.log(dateA > dateB);
+								    return (k1 > k2) ? 1 : -1;  
+								  })
+						//console.log(JSON.parse(JSON.stringify(dtobj)));
 						$scope.dtlabels= [];
 						$scope.dtdata= [];
 						$scope.dtdatas= [];
 							for (var dtkey in dtobj) {
 							     //   users.push({user:key,article:obj[key]});
-							        $scope.dtlabels.push(dtkey);
+							     //console.log(dtkey);
+							     dtcrt = new Date(dtkey.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'));
+							   //  console.log(dtcrt);
+							        $scope.dtlabels.push(dtcrt.toDateString());
 							        $scope.dtdatas.push(dtobj[dtkey]);
 							        $scope.datez.push({
-							        	"Date" : dtkey,
+							        	"Date" : dtcrt.toDateString(),
 							        	"ArticleNo":dtobj[dtkey]
 							        });
 							    }
